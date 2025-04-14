@@ -66,26 +66,32 @@ enum OpenMPDirectiveKindEx {
 struct OpenMPDirectiveKindExWrapper {
   OpenMPDirectiveKindExWrapper(unsigned Value) : Value(Value) {}
   OpenMPDirectiveKindExWrapper(OpenMPDirectiveKind DK) : Value(unsigned(DK)) {}
+
   bool operator==(OpenMPDirectiveKindExWrapper V) const {
-    return Value == V.Value;
+      return Value == V.Value;
   }
+
   bool operator!=(OpenMPDirectiveKindExWrapper V) const {
-    return Value != V.Value;
+      return Value != V.Value;
   }
+
   bool operator==(OpenMPDirectiveKind V) const {
-     return Value == unsigned(V); }
-  bool operator!=(OpenMPDirectiveKind V) const { 
-    
-    return Value != unsigned(V); }
-  bool operator<(OpenMPDirectiveKind V) const { 
-    
-    
-    return Value < unsigned(V); }
+      return Value == unsigned(V);
+  }
+
+  bool operator!=(OpenMPDirectiveKind V) const {
+      return Value != unsigned(V);
+  }
+
+  bool operator<(OpenMPDirectiveKind V) const {
+      return Value < unsigned(V);
+  }
+
   operator unsigned() const { return Value; }
-  operator OpenMPDirectiveKind() const { 
-    
-    
-    return OpenMPDirectiveKind(Value); }
+  operator OpenMPDirectiveKind() const {
+      return OpenMPDirectiveKind(Value);
+  }
+
   unsigned Value;
 };
 
@@ -97,22 +103,23 @@ class DeclDirectiveListParserHelper final {
 public:
   DeclDirectiveListParserHelper(Parser *P, OpenMPDirectiveKind Kind)
       : P(P), Kind(Kind) {}
+
   void operator()(CXXScopeSpec &SS, DeclarationNameInfo NameInfo) {
-    ExprResult Res = P->getActions().OpenMP().ActOnOpenMPIdExpression(
-        P->getCurScope(), SS, NameInfo, Kind);
-    if (Res.isUsable())
-      Identifiers.push_back(Res.get());
+      ExprResult Res = P->getActions().OpenMP().ActOnOpenMPIdExpression(
+          P->getCurScope(), SS, NameInfo, Kind);
+      if (Res.isUsable())
+          Identifiers.push_back(Res.get());
   }
+
   llvm::ArrayRef<Expr *> getIdentifiers() const { return Identifiers; }
 };
-} // namespace
 
 // Map token string to extended OMP token kind that are
 // OpenMPDirectiveKind + OpenMPDirectiveKindEx.
 static unsigned getOpenMPDirectiveKindEx(StringRef S) {
   OpenMPDirectiveKindExWrapper DKind = getOpenMPDirectiveKind(S);
   if (DKind != OMPD_unknown)
-    return DKind;
+      return DKind;
 
   return llvm::StringSwitch<OpenMPDirectiveKindExWrapper>(S)
       .Case("cancellation", OMPD_cancellation)
@@ -129,6 +136,7 @@ static unsigned getOpenMPDirectiveKindEx(StringRef S) {
       .Case("begin", OMPD_begin)
       .Default(OMPD_unknown);
 }
+
 
 static OpenMPDirectiveKindExWrapper parseOpenMPDirectiveKind(Parser &P) {
   // Array of foldings: F[i][0] F[i][1] ===> F[i][2].
