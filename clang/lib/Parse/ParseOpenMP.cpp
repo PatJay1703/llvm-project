@@ -72,11 +72,20 @@ struct OpenMPDirectiveKindExWrapper {
   bool operator!=(OpenMPDirectiveKindExWrapper V) const {
     return Value != V.Value;
   }
-  bool operator==(OpenMPDirectiveKind V) const { return Value == unsigned(V); }
-  bool operator!=(OpenMPDirectiveKind V) const { return Value != unsigned(V); }
-  bool operator<(OpenMPDirectiveKind V) const { return Value < unsigned(V); }
+  bool operator==(OpenMPDirectiveKind V) const {
+     return Value == unsigned(V); }
+  bool operator!=(OpenMPDirectiveKind V) const { 
+    
+    return Value != unsigned(V); }
+  bool operator<(OpenMPDirectiveKind V) const { 
+    
+    
+    return Value < unsigned(V); }
   operator unsigned() const { return Value; }
-  operator OpenMPDirectiveKind() const { return OpenMPDirectiveKind(Value); }
+  operator OpenMPDirectiveKind() const { 
+    
+    
+    return OpenMPDirectiveKind(Value); }
   unsigned Value;
 };
 
