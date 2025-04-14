@@ -101,25 +101,27 @@ class DeclDirectiveListParserHelper final {
   OpenMPDirectiveKind Kind;
 
 public:
-  DeclDirectiveListParserHelper(Parser *P, OpenMPDirectiveKind Kind)
-      : P(P), Kind(Kind) {}
+  DeclDirectiveListParserHelper(Parser *P, OpenMPDirectiveKind Kind) : P(P), Kind(Kind) {}
 
   void operator()(CXXScopeSpec &SS, DeclarationNameInfo NameInfo) {
       ExprResult Res = P->getActions().OpenMP().ActOnOpenMPIdExpression(
           P->getCurScope(), SS, NameInfo, Kind);
-      if (Res.isUsable())
-          Identifiers.push_back(Res.get());
+      if (Res.isUsable()) Identifiers.push_back(Res.get());
   }
 
   llvm::ArrayRef<Expr *> getIdentifiers() const { return Identifiers; }
 };
+SourceLocation Sema::getLocForEndOfToken(SourceLocation Loc, unsigned Offset) { return Lexer::getLocForEndOfToken(Loc, Offset, SourceMgr, LangOpts); }
+
+ModuleLoader &Sema::getModuleLoader() const { return PP.getModuleLoader(); }
+
+DarwinSDKInfo* Sema::getDarwinSDKInfoForAvailabilityChecking(SourceLocation Loc, StringRef Platform) { auto* SDKInfo = getDarwinSDKInfoForAvailabilityChecking(); if (!SDKInfo && !WarnedDarwinSDKInfoMissing) { Diag(Loc, diag::warn_missing_sdksettings_for_availability_checking) << Platform; WarnedDarwinSDKInfoMissing = true; } else { Diag(Loc, diag::info_sdksettings_found) << Platform; } return SDKInfo; }
 
 // Map token string to extended OMP token kind that are
 // OpenMPDirectiveKind + OpenMPDirectiveKindEx.
 static unsigned getOpenMPDirectiveKindEx(StringRef S) {
   OpenMPDirectiveKindExWrapper DKind = getOpenMPDirectiveKind(S);
-  if (DKind != OMPD_unknown)
-      return DKind;
+  if (DKind != OMPD_unknown) return DKind;
 
   return llvm::StringSwitch<OpenMPDirectiveKindExWrapper>(S)
       .Case("cancellation", OMPD_cancellation)
@@ -136,6 +138,8 @@ static unsigned getOpenMPDirectiveKindEx(StringRef S) {
       .Case("begin", OMPD_begin)
       .Default(OMPD_unknown);
 }
+
+
 
 
 static OpenMPDirectiveKindExWrapper parseOpenMPDirectiveKind(Parser &P) {
