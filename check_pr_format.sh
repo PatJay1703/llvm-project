@@ -4,8 +4,7 @@ pr_number=$1
 base_branch=${2:-main}
 
 # Fetch the PR diff and list modified files (as done in Step 2)
-response=$(curl -s -H "Authorization: token 
-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" \
+response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
     "https://api.github.com/repos/llvm/llvm-project/pulls/$pr_number/files")
 
 # Check if response is empty or error occurred
